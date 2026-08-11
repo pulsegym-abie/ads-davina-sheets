@@ -1,0 +1,6 @@
+*
+!private/
+!public/
+!ads/
+!ads/**
+!.gitignore

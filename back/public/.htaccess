@@ -1,0 +1,25 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    # Serve the SPA entry for "/" (before Laravel's web "/" route).
+    DirectoryIndex index.html index.php
+
+    RewriteEngine On
+
+    # Handle Authorization Header (Sanctum bearer tokens)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Real files/dirs (SPA assets, images, /storage, etc.) are served as-is.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # API + OAuth + Sanctum → Laravel front controller.
+    RewriteRule ^(api|sanctum|up)(/|$) index.php [L]
+
+    # Everything else → the Vue SPA (history-mode routing: /login, /settings, /auth/callback…).
+    RewriteRule ^ index.html [L]
+</IfModule>
