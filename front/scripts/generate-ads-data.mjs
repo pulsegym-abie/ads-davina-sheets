@@ -73,6 +73,11 @@ function parseMeta(file, periodId) {
     }
   }
 
+  // Prefer Ad set (then Campaign) as the breakdown dimension when present,
+  // regardless of column order in the export.
+  if ('Ad set name' in col) labelCol = 'Ad set name'
+  else if ('Campaign name' in col) labelCol = 'Campaign name'
+
   const dimension = labelCol ? labelCol.replace(/\s*name$/i, '').trim() || 'Ad set' : 'Ad set'
   const base = {
     source: 'meta', title: 'Meta Ads', currency: 'IDR', dimension,
