@@ -4,7 +4,7 @@ Dashboard performa iklan **Meta + Google** yang membaca file **Excel (.xlsx)** d
 **CSV** hasil ekspor (bukan API live) — cocok untuk mockup ke klien. Ada animasi
 "fetching from Meta/Google API" biar terlihat seperti tarik data real-time.
 
-- **Repo:** https://github.com/abietechno/ads-davina-versi-sheets.git
+- **Repo:** https://github.com/pulsegym-abie/ads-davina-sheets.git
 - **Domain:** https://ads-performance.pulsepowerhub.id
 - **Server:** aaPanel + **Apache** + PHP 8.2/8.3 + MySQL
 - **Login demo:** `admin@admin` / `password`
@@ -53,13 +53,13 @@ SPA sudah **di-build dan disalin ke `back/public`** + `.htaccess` sudah diatur u
 
 ## 4. Ambil kode dari Git
 
-Di **Terminal aaPanel** (atau SSH), sebagai contoh path `/www/wwwroot/ads-davina-versi-sheets`:
+Di **Terminal aaPanel** (atau SSH), sebagai contoh path `/www/wwwroot/ads-davina-sheets`:
 
 ```bash
 cd /www/wwwroot
-rm -rf ads-davina-versi-sheets
-git clone https://github.com/abietechno/ads-davina-versi-sheets.git
-cd ads-davina-versi-sheets/back
+rm -rf ads-davina-sheets
+git clone https://github.com/pulsegym-abie/ads-davina-sheets.git
+cd ads-davina-sheets/back
 ```
 
 > Kalau sudah pernah clone, cukup: `cd .../back && git pull`.
@@ -67,7 +67,7 @@ cd ads-davina-versi-sheets/back
 ## 5. Setup Laravel (backend)
 
 ```bash
-# dari folder .../ads-davina-versi-sheets/back
+# dari folder .../ads-davina-sheets/back
 
 # 1) Dependencies (butuh composer + ekstensi PHP: zip, xml, mbstring, gd, curl, fileinfo)
 composer install --no-dev --optimize-autoloader
@@ -122,7 +122,7 @@ Supaya klien bisa login pakai akun Google:
    (Site root = folder hasil clone; run directory `/back/public` = docroot Laravel.)
 2. Permission (jalankan sebagai user web `www`):
    ```bash
-   cd /www/wwwroot/ads-davina-versi-sheets/back
+   cd /www/wwwroot/ads-davina-sheets/back
    chown -R www:www .
    chmod -R 775 storage bootstrap/cache
    ```
@@ -174,8 +174,8 @@ bungkus route-nya dengan `auth:sanctum` (kabari saja).
 ### Ringkas — deploy cepat
 
 ```bash
-cd /www/wwwroot && git clone https://github.com/abietechno/ads-davina-versi-sheets.git
-cd ads-davina-versi-sheets/back
+cd /www/wwwroot && git clone https://github.com/pulsegym-abie/ads-davina-sheets.git
+cd ads-davina-sheets/back
 composer install --no-dev --optimize-autoloader
 cp .env.example .env         # isi DB + Google OAuth
 php artisan key:generate
