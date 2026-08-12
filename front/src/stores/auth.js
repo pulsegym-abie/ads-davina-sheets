@@ -1,49 +1,39 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '@/api/axios'
+import { supabase } from '@/lib/supabase'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(JSON.parse(localStorage.getItem('auth_user') || 'null'))
-  const token = ref(localStorage.getItem('auth_token') || '')
+  const session = ref(null)
+  const ready = ref(false)
 
-  const isLoggedIn = computed(() => !!token.value)
+  const user = computed(() => session.value?.user ?? null)
+  const isLoggedIn = computed(() => !!session.value)
+  const displayName = computed(
+    () => user.value?.user_metadata?.name || user.value?.email || 'User',
+  )
 
-  async function login(email, password) {
-    const { data } = await api.post('/login', { email, password })
-
-    token.value = data.data.token
-    user.value = data.data.user
-
-    localStorage.setItem('auth_token', data.data.token)
-    localStorage.setItem('auth_user', JSON.stringify(data.data.user))
-
-    return data
+  // Called once on app start (main.js) — loads any persisted session and keeps
+  // it in sync with Supabase (login/logout/token refresh).
+  async function init() {
+    const { data } = await supabase.auth.getSession()
+    session.value = data.session
+    ready.value = true
+    supabase.auth.onAuthStateChange((_event, s) => {
+      session.value = s
+    })
   }
 
-  async function fetchUser() {
-    try {
-      const { data } = await api.get('/me')
-      user.value = data.data
-      localStorage.setItem('auth_user', JSON.stringify(data.data))
-    } catch {
-      logout()
-    }
+  async function loginWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/auth/callback' },
+    })
   }
 
   async function logout() {
-    try {
-      if (token.value) {
-        await api.post('/logout')
-      }
-    } catch {
-      // ignore
-    } finally {
-      token.value = ''
-      user.value = null
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('auth_user')
-    }
+    await supabase.auth.signOut()
+    session.value = null
   }
 
-  return { user, token, isLoggedIn, login, fetchUser, logout }
+  return { session, user, ready, isLoggedIn, displayName, init, loginWithGoogle, logout }
 })

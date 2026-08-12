@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import api from '@/api/axios'
+import { buildReport } from '@/lib/adsReport'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -56,7 +56,8 @@ const kpis = computed(() => {
 const showViews = computed(() => report.value?.totals?.views != null)
 
 async function loadPeriods() {
-  const { data } = await api.get('/ads/report/periods')
+  const res = await fetch(`${import.meta.env.BASE_URL}ads-data/periods.json`)
+  const data = await res.json()
   periods.value = data.data || []
 }
 
@@ -78,13 +79,14 @@ async function loadReport(animate = false) {
   error.value = ''
   const started = Date.now()
   try {
-    const params = { source: source.value, period: selectedPeriod.value }
-    if (dateFrom.value) params.from = dateFrom.value
-    if (dateTo.value) params.to = dateTo.value
-    const { data } = await api.get('/ads/report', { params })
-    report.value = data.data
-  } catch (e) {
-    error.value = e?.response?.data?.message || 'Gagal memuat laporan.'
+    const res = await fetch(
+      `${import.meta.env.BASE_URL}ads-data/${selectedPeriod.value}__${source.value}.json`,
+    )
+    if (!res.ok) throw new Error('not found')
+    const raw = await res.json()
+    report.value = buildReport(raw, dateFrom.value, dateTo.value)
+  } catch {
+    error.value = 'Laporan tidak ditemukan untuk periode/sumber itu.'
     report.value = null
   } finally {
     // Let the "fetching from Meta/Google API" animation breathe (mockup polish).

@@ -1,36 +1,31 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
-const route = useRoute()
-const auth = useAuthStore()
 
-onMounted(() => {
-  const token = route.query.token
-  const name = route.query.name
-  const error = route.query.error
+onMounted(async () => {
+  // supabase-js parses the OAuth redirect hash automatically (detectSessionInUrl).
+  const { data } = await supabase.auth.getSession()
+  if (data.session) return router.replace('/')
 
-  if (error) {
-    router.push('/login?error=' + error)
-    return
-  }
+  let done = false
+  const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    if (s && !done) {
+      done = true
+      sub.subscription.unsubscribe()
+      router.replace('/')
+    }
+  })
 
-  if (token) {
-    // Save token and user info
-    localStorage.setItem('auth_token', token)
-    localStorage.setItem('auth_user', JSON.stringify({ name: name || 'User' }))
-    auth.token = token
-    auth.user = { name: name || 'User' }
-
-    // Fetch full user data then redirect
-    auth.fetchUser().then(() => {
-      router.push('/')
-    })
-  } else {
-    router.push('/login')
-  }
+  // Safety net: if no session shows up, go back to login.
+  setTimeout(() => {
+    if (!done) {
+      sub.subscription.unsubscribe()
+      router.replace('/login')
+    }
+  }, 6000)
 })
 </script>
 
@@ -38,7 +33,7 @@ onMounted(() => {
   <div class="flex min-h-screen items-center justify-center bg-background">
     <div class="text-center">
       <div class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-muted-foreground border-t-foreground" />
-      <p class="text-sm text-muted-foreground">Signing you in...</p>
+      <p class="text-sm text-muted-foreground">Signing you in…</p>
     </div>
   </div>
 </template>

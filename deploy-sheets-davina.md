@@ -1,187 +1,130 @@
 # Deploy — Ads Performance (versi Sheets/Excel) · Davina
 
 Dashboard performa iklan **Meta + Google** yang membaca file **Excel (.xlsx)** dan
-**CSV** hasil ekspor (bukan API live) — cocok untuk mockup ke klien. Ada animasi
-"fetching from Meta/Google API" biar terlihat seperti tarik data real-time.
+**CSV** hasil ekspor. Untuk mockup ke klien — ada animasi "fetching from Meta/Google
+API" biar terlihat seperti tarik data real-time.
 
 - **Repo:** https://github.com/pulsegym-abie/ads-davina-sheets.git
-- **Domain:** https://ads-performance.pulsepowerhub.id
-- **Server:** aaPanel + **Apache** + PHP 8.2/8.3 + MySQL
-- **Login demo:** `admin@admin` / `password`
-- **Login Google (SSO):** aktif — klien tinggal klik "Login with Google" (perlu setup OAuth, lihat bagian 6)
+- **Frontend:** **Vercel** → https://ad.pulsepowerhub.id (domain custom)
+- **Auth:** **Supabase** (Login **Google SSO** saja)
+- **Backend/Server:** **TIDAK ADA.** Data Excel di-convert jadi JSON saat build; app-nya statis.
 
 ---
 
-## 1. Hasil akhir / fitur
+## 1. Cara kerja (penting)
 
-- **2 sumber:** tab **Meta** (baca `.xlsx`) & **Google** (baca `.csv`), toggle di kanan atas.
-- **Per periode (bulan):** dropdown periode; data diambil dari folder `back/storage/app/ads/<YYYY-MM>/`.
-- **Custom date-range:** muncul otomatis kalau file-nya format **harian** (ada kolom `Day`).
-  Meta sudah didukung; Google **juga sudah** didukung — tinggal unggah ekspor Google
-  yang di-segment per hari (lihat bagian 8).
-- **KPI:** Spend, Impressions, Clicks, CTR, CPC, CPM, + Reach (Meta) / Conversions (Google).
-- **Grafik:** donut spend per campaign/ad set + tabel per campaign.
-- **Animasi fetching:** overlay "menyinkronkan data" (logo Meta/Google, radar, langkah
-  OAuth→fetch→hitung) tiap ganti source/periode. Murni efek demo (~2,6 dtk).
-- **Menu Settings disembunyikan** (route masih ada, tapi tidak tampil di menu).
-
-## 2. Arsitektur di server (single-domain)
-
-Satu domain saja. **Document root = `back/public`** (cara standar aaPanel untuk Laravel):
+Aplikasi ini **tidak punya server backend saat runtime**. Alurnya:
 
 ```
-https://ads-performance.pulsepowerhub.id/            → SPA Vue (back/public/index.html)
-https://ads-performance.pulsepowerhub.id/assets/…    → aset SPA (sudah di-build & ikut di repo)
-https://ads-performance.pulsepowerhub.id/api/…       → Laravel API
-https://ads-performance.pulsepowerhub.id/api/auth/google/callback → OAuth Google
+File Excel/CSV (di repo: back/storage/app/ads/<YYYY-MM>/)
+        │  ← saat build di Vercel (script Node + SheetJS)
+        ▼
+JSON statis (front/public/ads-data/*.json)
+        │  ← di-fetch langsung oleh SPA
+        ▼
+Vercel (Vue SPA)  ──auth──►  Supabase (Login Google)
 ```
 
-SPA sudah **di-build dan disalin ke `back/public`** + `.htaccess` sudah diatur untuk:
-- melayani file nyata (aset) apa adanya,
-- `/api`, `/sanctum`, `/up` → Laravel (`index.php`),
-- sisanya → `index.html` (Vue Router history-mode: `/login`, `/settings`, `/auth/callback`).
+- **Parsing Excel/CSV** dilakukan **saat build** (`front/scripts/generate-ads-data.mjs`),
+  bukan saat user membuka halaman. Hasilnya JSON statis yang ringan.
+- **Filter tanggal & agregasi** (totals, donut, tabel) dihitung **di browser**
+  (`front/src/lib/adsReport.js`) — sama persis dengan logika parser Laravel lama.
+- **Login** pakai **Supabase Auth** (tombol "Login with Google"). Tidak ada database
+  aplikasi, tidak ada PHP, tidak ada MySQL.
 
-**Artinya: tidak perlu Node/npm di server.** Cukup `git pull` + langkah Laravel di bawah.
+> JSON hasil generate **ikut di-commit** (`front/public/ads-data/`) sebagai cadangan,
+> jadi build tetap jalan walau host tidak menyertakan folder `back/`.
 
-## 3. Buat site di aaPanel
+## 2. Fitur
 
-1. **Website → Add site**
-   - Domain: `ads-performance.pulsepowerhub.id`
-   - PHP version: **8.2 atau 8.3**
-   - (boleh sekalian buat MySQL database di sini — catat nama DB, user, password)
-2. Setelah site jadi, **hapus** file bawaan di root site (`index.html` default aaPanel), nanti diganti hasil clone.
+- Tab **Meta** (`.xlsx`) & **Google** (`.csv`), toggle di kanan atas.
+- Dropdown **periode** (per bulan). **Custom date-range** muncul otomatis untuk file
+  format **harian** (ada kolom `Day`) — Meta & Google sama-sama didukung.
+- KPI: Spend, Impressions, Clicks, CTR, CPC, CPM, + Reach (Meta) / Conversions (Google).
+- Donut spend per campaign/ad set + tabel per campaign.
+- Animasi "fetching from Meta/Google API" tiap ganti source/periode (efek demo).
+- Login **Google SSO** saja (lewat Supabase).
 
-## 4. Ambil kode dari Git
+## 3. Setup Supabase (Auth Google) — sekali saja
 
-Di **Terminal aaPanel** (atau SSH), sebagai contoh path `/www/wwwroot/ads-davina-sheets`:
+1. Buat project di https://supabase.com → catat **Project URL** & **anon public key**
+   (Settings → API).
+2. **Authentication → Providers → Google → Enable.** Butuh OAuth dari Google:
+   - Di **Google Cloud Console → Credentials → Create OAuth client ID → Web app**.
+   - **Authorized redirect URI:** `https://<project-ref>.supabase.co/auth/v1/callback`
+     (URL callback-nya Supabase, ADA di halaman provider Google di Supabase — copy dari situ).
+   - Salin **Client ID** & **Client secret** Google → tempel ke provider Google di Supabase → Save.
+3. **Authentication → URL Configuration:**
+   - **Site URL:** `https://ad.pulsepowerhub.id`
+   - **Redirect URLs (Add):** `https://ad.pulsepowerhub.id/**` dan (untuk dev) `http://localhost:5173/**`
+4. (Opsional, batasi akses klien) undang email tertentu, atau biarkan siapa pun dengan
+   akun Google bisa masuk (default). Untuk mockup, default biasanya cukup.
 
+## 4. Deploy frontend ke Vercel
+
+Vercel sudah tersinkron dengan GitHub, jadi:
+
+1. **Import project** dari repo `pulsegym-abie/ads-davina-sheets`.
+2. **Root Directory: `front`** (WAJIB — ini monorepo; frontend ada di folder `front`).
+   Framework preset otomatis **Vite**. Build command `npm run build`, output `dist`
+   (default, tidak perlu diubah).
+3. **Environment Variables** (Project → Settings → Environment Variables):
+   ```
+   VITE_SUPABASE_URL       = https://<project-ref>.supabase.co
+   VITE_SUPABASE_ANON_KEY  = <anon public key dari Supabase>
+   ```
+   > Jangan taruh nilai ini di file `.env` yang di-commit — cukup di Vercel.
+4. **Deploy.** Setiap `git push` ke `main` → Vercel auto-build & deploy.
+
+`vercel.json` (SPA history-mode routing) sudah ada, jadi refresh di `/` atau
+`/auth/callback` tidak akan 404.
+
+## 5. Custom domain https://ad.pulsepowerhub.id
+
+1. Vercel → Project → **Settings → Domains → Add** `ad.pulsepowerhub.id`.
+2. Ikuti instruksi DNS Vercel di panel domain `pulsepowerhub.id`:
+   - Biasanya tambah **CNAME** `ad` → `cname.vercel-dns.com` (atau A record sesuai yang Vercel tampilkan).
+3. Tunggu verifikasi + SSL otomatis dari Vercel.
+4. Pastikan domain ini juga terdaftar di **Supabase → URL Configuration** (langkah 3.3),
+   kalau tidak, login Google akan ditolak redirect-nya.
+
+## 6. Menambah / mengganti data laporan
+
+Data = file di `back/storage/app/ads/<YYYY-MM>/`:
+
+- **Meta:** `.xlsx` (sheet **"Raw Data Report"**), format bulanan atau harian (kolom `Day`).
+- **Google:** `.csv` ekspor **"Campaign performance"**. Untuk custom date-range di Google,
+  ekspor dengan **segment "Day"**.
+
+Langkah update:
 ```bash
-cd /www/wwwroot
-rm -rf ads-davina-sheets
-git clone https://github.com/pulsegym-abie/ads-davina-sheets.git
-cd ads-davina-sheets/back
+# taruh file baru di back/storage/app/ads/2026-08/ (buat folder baru bila perlu)
+cd front
+npm run generate:data      # regenerate JSON dari Excel/CSV
+git add -A && git commit -m "data: tambah laporan Agustus 2026" && git push
+# Vercel auto-rebuild → data baru live
 ```
+> `npm run build` juga otomatis menjalankan generate (`prebuild`), jadi Vercel selalu
+> memakai data terbaru dari repo.
 
-> Kalau sudah pernah clone, cukup: `cd .../back && git pull`.
-
-## 5. Setup Laravel (backend)
-
-```bash
-# dari folder .../ads-davina-sheets/back
-
-# 1) Dependencies (butuh composer + ekstensi PHP: zip, xml, mbstring, gd, curl, fileinfo)
-composer install --no-dev --optimize-autoloader
-
-# 2) .env
-cp .env.example .env
-# lalu EDIT .env → isi DB_DATABASE / DB_USERNAME / DB_PASSWORD dari aaPanel,
-# dan (nanti) GOOGLE_LOGIN_CLIENT_ID / SECRET (bagian 6).
-# APP_URL & FRONTEND_URL & redirect URI sudah diisi domain produksi.
-
-php artisan key:generate
-
-# 3) Database: migrasi + seed admin (admin@admin / password)
-php artisan migrate --force
-php artisan db:seed --force
-
-# 4) Symlink storage (untuk logo perusahaan yg diupload lewat Settings)
-php artisan storage:link
-
-# 5) Cache konfigurasi (produksi)
-php artisan optimize
-```
-
-> **Penting (baca Excel):** pastikan ekstensi PHP **`zip`**, **`xml`**, **`mbstring`**,
-> **`gd`** aktif di aaPanel (Software Store → PHP → Setting → Install extensions).
-> File `.xlsx` = arsip zip; tanpa `php-zip` parser Meta akan error.
-
-## 6. Aktifkan Login Google (SSO)
-
-Supaya klien bisa login pakai akun Google:
-
-1. Buka **Google Cloud Console → APIs & Services → Credentials**.
-2. **Create Credentials → OAuth client ID → Web application**.
-   - **Authorized JavaScript origins:** `https://ads-performance.pulsepowerhub.id`
-   - **Authorized redirect URIs:** `https://ads-performance.pulsepowerhub.id/api/auth/google/callback`
-3. Salin **Client ID** & **Client secret** ke `.env`:
-   ```
-   GOOGLE_LOGIN_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
-   GOOGLE_LOGIN_CLIENT_SECRET=xxxxxxxx
-   GOOGLE_LOGIN_REDIRECT_URI=https://ads-performance.pulsepowerhub.id/api/auth/google/callback
-   ```
-4. Terapkan: `php artisan config:cache`
-5. (Di OAuth consent screen, tambahkan email klien sebagai **Test user** kalau app
-   masih "Testing", atau **Publish** app-nya biar semua akun Google bisa login.)
-
-> Catatan: siapa pun yang login via Google akan **otomatis dibuatkan akun** di sistem
-> (tanpa allow-list). Untuk demo klien ini oke. Kalau mau dibatasi, kabari nanti.
-
-## 7. Set run directory, permission, & SSL
-
-1. **aaPanel → site → Site directory / 运行目录 (run directory): set ke `/back/public`.**
-   (Site root = folder hasil clone; run directory `/back/public` = docroot Laravel.)
-2. Permission (jalankan sebagai user web `www`):
-   ```bash
-   cd /www/wwwroot/ads-davina-sheets/back
-   chown -R www:www .
-   chmod -R 775 storage bootstrap/cache
-   ```
-3. **SSL:** aaPanel → site → SSL → Let's Encrypt → terbitkan untuk
-   `ads-performance.pulsepowerhub.id`, aktifkan **Force HTTPS**.
-4. Pastikan **mod_rewrite** aktif (Apache aaPanel default aktif) dan `AllowOverride All`
-   agar `.htaccess` di `back/public` terbaca (biasanya sudah default di aaPanel).
-
-Selesai → buka `https://ads-performance.pulsepowerhub.id`, login `admin@admin` / `password`.
-
-## 8. Menambah / mengganti data laporan
-
-Data = file di `back/storage/app/ads/<YYYY-MM>/` (satu folder per bulan):
-
-- **Meta:** taruh file `.xlsx` (sheet **"Raw Data Report"**). Format bulanan atau harian
-  (ada kolom **Day**) sama-sama didukung.
-- **Google:** taruh file `.csv` ekspor **"Campaign performance"**.
-  - Untuk mengaktifkan **custom date-range di Google**, ekspor dengan **segment "Day"**
-    (satu baris per campaign per hari, ada kolom `Day`). Filter tanggal akan otomatis
-    muncul di tab Google.
-
-Upload via **aaPanel File Manager** ke folder bulan yang sesuai (buat folder baru mis.
-`2026-08` kalau perlu). Tidak perlu restart apa pun — dibaca langsung tiap request.
-
-> File contoh sudah ikut di repo (`2026-01` … `2026-07`), jadi begitu deploy langsung ada isinya.
-
-## 9. Kalau tampilan front diubah (butuh rebuild)
-
-SPA hasil build **sudah ikut di repo** (`back/public/index.html` + `back/public/assets`).
-Kalau nanti kode di `front/` diubah, rebuild lalu salin ulang:
+## 7. Jalankan lokal (opsional)
 
 ```bash
 cd front
 npm install
-npm run build           # pakai front/.env.production (VITE_API_URL = domain/api)
-cp -r dist/* ../back/public/
-# lalu commit back/public + push, dan git pull di server
+# buat front/.env.local:
+#   VITE_SUPABASE_URL=...
+#   VITE_SUPABASE_ANON_KEY=...
+npm run generate:data      # sekali, untuk membuat public/ads-data (kalau belum ada)
+npm run dev                # http://localhost:5173
 ```
 
-## 10. Catatan keamanan (untuk diketahui)
+## 8. Catatan
 
-Endpoint laporan `GET /api/ads/report` & `/api/ads/report/periods` saat ini **publik**
-(tanpa login) — memang disiapkan begitu untuk kemudahan demo. Data yang tampil hanya
-angka agregat dari file yang kamu unggah. Kalau nanti perlu dikunci ke login, tinggal
-bungkus route-nya dengan `auth:sanctum` (kabari saja).
-
----
-
-### Ringkas — deploy cepat
-
-```bash
-cd /www/wwwroot && git clone https://github.com/pulsegym-abie/ads-davina-sheets.git
-cd ads-davina-sheets/back
-composer install --no-dev --optimize-autoloader
-cp .env.example .env         # isi DB + Google OAuth
-php artisan key:generate
-php artisan migrate --force && php artisan db:seed --force
-php artisan storage:link && php artisan optimize
-chown -R www:www . && chmod -R 775 storage bootstrap/cache
-# aaPanel: run directory = /back/public, terbitkan SSL, Force HTTPS
-```
-Login: **admin@admin / password** · atau **Login with Google**.
+- Folder **`back/` (Laravel) TIDAK dipakai lagi saat runtime** — dibiarkan hanya sebagai
+  tempat file sumber Excel/CSV (`back/storage/app/ads`) yang dibaca saat build. Tidak
+  perlu server PHP / aaPanel / MySQL sama sekali.
+- Semua perhitungan (filter tanggal, totals, reach) identik dengan versi Laravel;
+  reach untuk rentang custom ditandai perkiraan (audiens antar-hari bisa overlap).
+- Kalau nanti mau data bisa diganti tanpa rebuild (upload dari UI), itu butuh pindah
+  ke Supabase Storage + Edge Function — kabari saja.
