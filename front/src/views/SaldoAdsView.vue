@@ -157,11 +157,11 @@ onMounted(load)
             <div class="grid grid-cols-2 gap-3">
               <div class="space-y-1.5">
                 <Label class="text-xs">Dari</Label>
-                <Input v-model="dateFrom" type="date" :max="dateTo" />
+                <Input v-model="dateFrom" type="date" :max="dateTo" class="h-11 text-base sm:h-9 sm:text-sm" />
               </div>
               <div class="space-y-1.5">
                 <Label class="text-xs">Sampai</Label>
-                <Input v-model="dateTo" type="date" :min="dateFrom" />
+                <Input v-model="dateTo" type="date" :min="dateFrom" class="h-11 text-base sm:h-9 sm:text-sm" />
               </div>
             </div>
           </div>
@@ -215,15 +215,15 @@ onMounted(load)
     <Card>
       <CardHeader><CardTitle class="text-base">Tambah Transaksi</CardTitle></CardHeader>
       <CardContent>
-        <form class="grid gap-3 sm:grid-cols-5 sm:items-end" @submit.prevent="handleSubmit">
+        <form class="grid gap-4 sm:grid-cols-5 sm:items-end sm:gap-3" @submit.prevent="handleSubmit">
           <div class="space-y-1.5">
             <Label class="text-xs">Tanggal</Label>
-            <Input v-model="form.date" type="date" :max="today" required />
+            <Input v-model="form.date" type="date" :max="today" required class="h-11 text-base sm:h-9 sm:text-sm" />
           </div>
           <div class="space-y-1.5">
             <Label class="text-xs">Platform</Label>
             <Select v-model="form.platform">
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger class="h-11 text-base sm:h-9 sm:text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="meta">Meta</SelectItem>
                 <SelectItem value="google">Google</SelectItem>
@@ -233,7 +233,7 @@ onMounted(load)
           <div class="space-y-1.5">
             <Label class="text-xs">Jenis</Label>
             <Select v-model="form.type">
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger class="h-11 text-base sm:h-9 sm:text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="in">Pemasukan</SelectItem>
                 <SelectItem value="out">Pengeluaran</SelectItem>
@@ -242,13 +242,16 @@ onMounted(load)
           </div>
           <div class="space-y-1.5">
             <Label class="text-xs">Jumlah (Rp)</Label>
-            <Input v-model="form.amount" type="number" min="1" step="1" placeholder="0" required />
+            <Input
+              v-model="form.amount" type="number" inputmode="decimal" min="1" step="1" placeholder="0" required
+              class="h-11 text-base sm:h-9 sm:text-sm"
+            />
           </div>
           <div class="space-y-1.5 sm:col-span-1">
             <Label class="text-xs">Catatan (opsional)</Label>
-            <Input v-model="form.note" type="text" placeholder="mis. top up saldo" />
+            <Input v-model="form.note" type="text" placeholder="mis. top up saldo" class="h-11 text-base sm:h-9 sm:text-sm" />
           </div>
-          <Button type="submit" class="sm:col-span-5 sm:w-auto sm:justify-self-start" :disabled="saving">
+          <Button type="submit" class="h-11 sm:col-span-5 sm:h-9 sm:w-auto sm:justify-self-start" :disabled="saving">
             {{ saving ? 'Menyimpan…' : 'Simpan' }}
           </Button>
         </form>
@@ -265,7 +268,38 @@ onMounted(load)
           </TabsList>
 
           <TabsContent v-for="tab in historyTabs" :key="tab.key" :value="tab.key" class="mt-0">
-            <div class="overflow-x-auto">
+            <!-- Mobile: stacked card list (a wide table doesn't fit a phone screen) -->
+            <div class="divide-y sm:hidden">
+              <p v-if="!loading && !tab.rows.length" class="px-4 py-10 text-center text-sm text-muted-foreground">
+                Belum ada transaksi {{ tab.key === 'all' ? '' : tab.label }} di rentang tanggal ini.
+              </p>
+              <div v-for="t in tab.rows" :key="t.id" class="flex items-start justify-between gap-3 px-4 py-3">
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="text-sm font-medium">{{ fmtDate(t.date) }}</span>
+                    <Badge v-if="tab.showPlatform" variant="outline" class="text-[10px]">{{ platformLabel(t.platform) }}</Badge>
+                    <Badge :class="t.type === 'in' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
+                      {{ t.type === 'in' ? 'Masuk' : 'Keluar' }}
+                    </Badge>
+                  </div>
+                  <p v-if="t.note" class="mt-1 truncate text-xs text-muted-foreground">{{ t.note }}</p>
+                </div>
+                <div class="flex shrink-0 items-center gap-1">
+                  <p class="text-sm font-semibold whitespace-nowrap" :class="t.type === 'in' ? 'text-emerald-600' : 'text-red-600'">
+                    {{ t.type === 'in' ? '+' : '-' }}{{ fmtRp(t.amount) }}
+                  </p>
+                  <Button
+                    variant="ghost" size="icon" class="h-8 w-8 text-muted-foreground hover:text-red-600"
+                    :disabled="deletingId === t.id" @click="handleDelete(t.id)"
+                  >
+                    <Trash2 class="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <!-- sm and up: full table -->
+            <div class="hidden overflow-x-auto sm:block">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -289,19 +323,17 @@ onMounted(load)
                         {{ t.type === 'in' ? 'Masuk' : 'Keluar' }}
                       </Badge>
                     </TableCell>
-                    <TableCell class="text-right font-medium" :class="t.type === 'in' ? 'text-emerald-600' : 'text-red-600'">
+                    <TableCell class="text-right font-medium whitespace-nowrap" :class="t.type === 'in' ? 'text-emerald-600' : 'text-red-600'">
                       {{ t.type === 'in' ? '+' : '-' }}{{ fmtRp(t.amount) }}
                     </TableCell>
                     <TableCell class="max-w-[200px] truncate text-muted-foreground" :title="t.note">{{ t.note || '—' }}</TableCell>
                     <TableCell>
-                      <button
-                        type="button"
-                        class="text-muted-foreground hover:text-red-600 disabled:opacity-50"
-                        :disabled="deletingId === t.id"
-                        @click="handleDelete(t.id)"
+                      <Button
+                        variant="ghost" size="icon" class="h-8 w-8 text-muted-foreground hover:text-red-600"
+                        :disabled="deletingId === t.id" @click="handleDelete(t.id)"
                       >
                         <Trash2 class="h-4 w-4" />
-                      </button>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 </TableBody>
