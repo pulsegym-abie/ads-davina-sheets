@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { BarChart3, Home, LogOut, Sun, Moon, Menu } from 'lucide-vue-next'
+import { BarChart3, Home, Wallet, LogOut, Sun, Moon, Menu } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,6 +17,7 @@ const { isDark, toggle: toggleDark } = useDarkMode()
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: Home },
+  { to: '/saldo-ads', label: 'Saldo Ads', icon: Wallet },
   // Settings menu hidden — not needed for now (route still exists at /settings).
 ]
 
