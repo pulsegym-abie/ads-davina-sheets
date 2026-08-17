@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableEmpty,
 } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CalendarDays, Trash2 } from 'lucide-vue-next'
 
 const PLATFORMS = [
@@ -107,6 +108,12 @@ function summaryFor(platform) {
 const overall = computed(() => summaryFor())
 const metaSummary = computed(() => summaryFor('meta'))
 const googleSummary = computed(() => summaryFor('google'))
+
+const historyTabs = computed(() => [
+  { key: 'all', label: 'Semua', rows: transactions.value, showPlatform: true },
+  { key: 'meta', label: 'Meta', rows: transactions.value.filter((t) => t.platform === 'meta'), showPlatform: false },
+  { key: 'google', label: 'Google', rows: transactions.value.filter((t) => t.platform === 'google'), showPlatform: false },
+])
 
 onMounted(load)
 </script>
@@ -239,48 +246,56 @@ onMounted(load)
     <Card>
       <CardHeader><CardTitle class="text-base">Riwayat Transaksi</CardTitle></CardHeader>
       <CardContent class="p-0">
-        <div class="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Tanggal</TableHead>
-                <TableHead>Platform</TableHead>
-                <TableHead>Jenis</TableHead>
-                <TableHead class="text-right">Jumlah</TableHead>
-                <TableHead>Catatan</TableHead>
-                <TableHead class="w-9" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableEmpty v-if="!loading && !transactions.length" :colspan="6">
-                Belum ada transaksi di rentang tanggal ini.
-              </TableEmpty>
-              <TableRow v-for="t in transactions" :key="t.id">
-                <TableCell class="whitespace-nowrap">{{ fmtDate(t.date) }}</TableCell>
-                <TableCell><Badge variant="outline">{{ platformLabel(t.platform) }}</Badge></TableCell>
-                <TableCell>
-                  <Badge :class="t.type === 'in' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
-                    {{ t.type === 'in' ? 'Masuk' : 'Keluar' }}
-                  </Badge>
-                </TableCell>
-                <TableCell class="text-right font-medium" :class="t.type === 'in' ? 'text-emerald-600' : 'text-red-600'">
-                  {{ t.type === 'in' ? '+' : '-' }}{{ fmtRp(t.amount) }}
-                </TableCell>
-                <TableCell class="max-w-[200px] truncate text-muted-foreground" :title="t.note">{{ t.note || '—' }}</TableCell>
-                <TableCell>
-                  <button
-                    type="button"
-                    class="text-muted-foreground hover:text-red-600 disabled:opacity-50"
-                    :disabled="deletingId === t.id"
-                    @click="handleDelete(t.id)"
-                  >
-                    <Trash2 class="h-4 w-4" />
-                  </button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
+        <Tabs default-value="all">
+          <TabsList class="mx-4 mb-2">
+            <TabsTrigger v-for="tab in historyTabs" :key="tab.key" :value="tab.key">{{ tab.label }}</TabsTrigger>
+          </TabsList>
+
+          <TabsContent v-for="tab in historyTabs" :key="tab.key" :value="tab.key" class="mt-0">
+            <div class="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Tanggal</TableHead>
+                    <TableHead v-if="tab.showPlatform">Platform</TableHead>
+                    <TableHead>Jenis</TableHead>
+                    <TableHead class="text-right">Jumlah</TableHead>
+                    <TableHead>Catatan</TableHead>
+                    <TableHead class="w-9" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableEmpty v-if="!loading && !tab.rows.length" :colspan="tab.showPlatform ? 6 : 5">
+                    Belum ada transaksi {{ tab.key === 'all' ? '' : tab.label }} di rentang tanggal ini.
+                  </TableEmpty>
+                  <TableRow v-for="t in tab.rows" :key="t.id">
+                    <TableCell class="whitespace-nowrap">{{ fmtDate(t.date) }}</TableCell>
+                    <TableCell v-if="tab.showPlatform"><Badge variant="outline">{{ platformLabel(t.platform) }}</Badge></TableCell>
+                    <TableCell>
+                      <Badge :class="t.type === 'in' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
+                        {{ t.type === 'in' ? 'Masuk' : 'Keluar' }}
+                      </Badge>
+                    </TableCell>
+                    <TableCell class="text-right font-medium" :class="t.type === 'in' ? 'text-emerald-600' : 'text-red-600'">
+                      {{ t.type === 'in' ? '+' : '-' }}{{ fmtRp(t.amount) }}
+                    </TableCell>
+                    <TableCell class="max-w-[200px] truncate text-muted-foreground" :title="t.note">{{ t.note || '—' }}</TableCell>
+                    <TableCell>
+                      <button
+                        type="button"
+                        class="text-muted-foreground hover:text-red-600 disabled:opacity-50"
+                        :disabled="deletingId === t.id"
+                        @click="handleDelete(t.id)"
+                      >
+                        <Trash2 class="h-4 w-4" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   </div>

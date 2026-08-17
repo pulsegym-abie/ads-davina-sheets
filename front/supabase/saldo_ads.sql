@@ -32,3 +32,10 @@ create policy "Authenticated users can delete saldo ads transactions"
   on public.saldo_ads_transactions for delete
   to authenticated
   using (true);
+
+-- RLS policies alone aren't enough — Postgres also checks plain table-level
+-- privileges first. Without these grants, every request 403s regardless of
+-- the policies above (this project's `public` schema apparently doesn't
+-- auto-grant to authenticated/anon the way some Supabase projects do).
+grant usage on schema public to authenticated;
+grant select, insert, delete on public.saldo_ads_transactions to authenticated;
