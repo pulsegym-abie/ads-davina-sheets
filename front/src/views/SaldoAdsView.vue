@@ -45,6 +45,19 @@ const fmtRp = (n) => 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(Nu
 const fmtDate = (d) => dayjs(d).format('D MMM YYYY')
 const platformLabel = (key) => PLATFORMS.find((p) => p.key === key)?.label || key
 
+// Show a friendly preset name instead of raw dates when the range matches one
+// of the quick presets — the exact "1 Jul — 17 Aug" span read as confusing.
+const rangeLabel = computed(() => {
+  const end = dayjs()
+  const presets = [
+    { from: end.startOf('month').format('YYYY-MM-DD'), label: 'Bulan Ini' },
+    { from: end.subtract(6, 'day').format('YYYY-MM-DD'), label: '7 Hari Terakhir' },
+    { from: end.subtract(29, 'day').format('YYYY-MM-DD'), label: '30 Hari Terakhir' },
+  ]
+  const match = presets.find((p) => p.from === dateFrom.value && dateTo.value === today)
+  return match ? match.label : `${fmtDate(dateFrom.value)} — ${fmtDate(dateTo.value)}`
+})
+
 async function load() {
   loading.value = true
   try {
@@ -131,7 +144,7 @@ onMounted(load)
         <PopoverTrigger as-child>
           <Button variant="outline" class="gap-2 font-normal">
             <CalendarDays class="h-4 w-4 text-muted-foreground" />
-            <span class="text-sm">{{ fmtDate(dateFrom) }} &mdash; {{ fmtDate(dateTo) }}</span>
+            <span class="text-sm">{{ rangeLabel }}</span>
           </Button>
         </PopoverTrigger>
         <PopoverContent class="w-auto p-4" align="end">
