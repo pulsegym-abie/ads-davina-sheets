@@ -12,15 +12,23 @@ export const useAuthStore = defineStore('auth', () => {
     () => user.value?.user_metadata?.name || user.value?.email || 'User',
   )
 
-  // Called once on app start (main.js) — loads any persisted session and keeps
-  // it in sync with Supabase (login/logout/token refresh).
-  async function init() {
-    const { data } = await supabase.auth.getSession()
-    session.value = data.session
-    ready.value = true
-    supabase.auth.onAuthStateChange((_event, s) => {
-      session.value = s
-    })
+  // Called on app start (main.js) and awaited by the router guard — loads any
+  // persisted session and keeps it in sync with Supabase (login/logout/token
+  // refresh). Cached so concurrent callers (main.js + first navigation guard)
+  // share one in-flight request instead of racing each other.
+  let initPromise = null
+  function init() {
+    if (!initPromise) {
+      initPromise = (async () => {
+        const { data } = await supabase.auth.getSession()
+        session.value = data.session
+        ready.value = true
+        supabase.auth.onAuthStateChange((_event, s) => {
+          session.value = s
+        })
+      })()
+    }
+    return initPromise
   }
 
   async function loginWithGoogle() {
