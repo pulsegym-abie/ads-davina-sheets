@@ -1,41 +1,41 @@
-Campaign performance
-"August 1, 2026 - August 31, 2026"
+Campaign performance,,,,,,,,,,,,,,,
+"August 1, 2026 - August 31, 2026",,,,,,,,,,,,,,,
 Campaign,Campaign state,Campaign type,Day,Clicks,Impr.,CTR,Currency code,Avg. CPC,Cost,Impr. (Abs. Top) %,Impr. (Top) %,Conversions,View-through conv.,Cost / conv.,Conv. rate
-Search PULSE-1,Enabled,Search,2026-08-06,95,258,36.82%,IDR,2017.22,191635.47,50.00%,75.00%,33.00,0,5807.14,34.74%
-Search PULSE-1,Enabled,Search,2026-08-09,79,224,35.27%,IDR,2237.95,176797.66,11.11%,66.67%,35.00,0,5051.36,44.30%
-Search PULSE-1,Enabled,Search,2026-08-02,77,196,39.29%,IDR,2204.61,169754.86,42.86%,85.71%,23.00,0,7380.65,29.87%
-Search PULSE-1,Enabled,Search,2026-08-08,76,268,28.36%,IDR,5926.78,450435.00,6.82%,54.55%,25.00,0,18017.40,32.89%
-Search PULSE-1,Enabled,Search,2026-08-04,73,251,29.08%,IDR,2950.48,215385.06,14.29%,54.76%,24.00,0,8974.38,32.88%
-Search PULSE-1,Enabled,Search,2026-08-05,68,215,31.63%,IDR,3025.01,205700.35,13.64%,63.64%,30.00,0,6856.68,44.12%
-Search PULSE-1,Enabled,Search,2026-08-01,66,243,27.16%,IDR,2595.49,171302.13,13.89%,52.78%,26.00,0,6588.54,39.39%
-Search PULSE-1,Enabled,Search,2026-08-03,65,352,18.47%,IDR,2866.85,186345.43,4.88%,48.78%,19.00,0,9807.65,29.23%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-26,58,"1,849",3.14%,IDR,2383.69,138253.83,0,0,6.00,0,23042.30,8.11%
-Search PULSE-1,Enabled,Search,2026-08-19,55,639,8.61%,IDR,3809.41,209517.70,16.81%,74.79%,18.00,0,11639.87,32.73%
-Search PULSE-1,Enabled,Search,2026-08-20,48,526,9.13%,IDR,3886.92,186572.25,10.98%,73.78%,7.00,0,26653.18,14.58%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-25,40,"1,877",2.13%,IDR,3377.74,135109.44,0,0,9.00,0,15012.16,17.65%
-Search PULSE-1,Enabled,Search,2026-08-11,39,514,7.59%,IDR,4082.33,159210.82,13.82%,64.52%,8.00,0,19901.35,20.51%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-27,37,"1,124",3.29%,IDR,2310.55,85490.48,0,0,8.00,0,10686.31,18.60%
-Search PULSE-1,Enabled,Search,2026-08-10,34,335,10.15%,IDR,4689.16,159431.48,12.38%,67.62%,12.00,0,13285.96,35.29%
-Search PULSE-1,Enabled,Search,2026-08-18,32,529,6.05%,IDR,3774.12,120771.76,14.22%,75.36%,6.00,0,20128.63,18.75%
-Search PULSE-1,Enabled,Search,2026-08-12,29,521,5.57%,IDR,5106.79,148096.98,8.50%,59.50%,12.00,0,12341.41,41.38%
-Search PULSE-1,Enabled,Search,2026-08-30,29,344,8.43%,IDR,8270.00,239830.11,48.53%,85.29%,1.16,0,206707.15,4.00%
-Search PULSE-1,Enabled,Search,2026-08-07,28,87,32.18%,IDR,2591.75,72569.00,33.33%,66.67%,10.00,0,7256.90,35.71%
-Search PULSE-1,Enabled,Search,2026-08-14,27,340,7.94%,IDR,3646.69,98460.76,15.00%,73.13%,9.00,0,10940.08,33.33%
-Search PULSE-1,Enabled,Search,2026-08-17,25,569,4.39%,IDR,3408.70,85217.42,16.79%,73.28%,4.00,0,21304.35,16.00%
-Search PULSE-1,Enabled,Search,2026-08-21,24,140,17.14%,IDR,4328.21,103877.00,5.56%,72.22%,11.00,0,9443.36,45.83%
-Search PULSE-1,Enabled,Search,2026-08-26,24,433,5.54%,IDR,9531.70,228760.92,29.59%,81.12%,5.50,0,41592.89,22.92%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-30,21,"1,377",1.53%,IDR,9523.35,199990.43,0,0,7.00,0,28570.06,24.14%
-Search PULSE-1,Enabled,Search,2026-08-15,19,322,5.90%,IDR,4040.03,76760.56,7.30%,70.80%,5.00,0,15352.11,26.32%
-Search PULSE-1,Enabled,Search,2026-08-25,18,233,7.73%,IDR,6418.56,115534.00,27.36%,82.08%,3.50,0,33009.71,19.44%
-Search PULSE-1,Enabled,Search,2026-08-27,17,459,3.70%,IDR,8318.53,141415.00,37.90%,82.19%,1.00,0,141415.00,5.88%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-24,17,523,3.25%,IDR,2125.92,36140.61,0,0,2.00,0,18070.30,7.14%
-Search PULSE-1,Enabled,Search,2026-08-16,16,381,4.20%,IDR,3570.00,57120.05,10.56%,72.22%,2.00,0,28560.03,12.50%
-Search PULSE-1,Enabled,Search,2026-08-13,13,382,3.40%,IDR,3063.59,39826.64,10.58%,61.90%,2.00,0,19913.32,15.38%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-31,12,278,4.32%,IDR,1284.07,15408.86,0,0,1.00,0,15408.86,4.17%
-Search PULSE-1,Enabled,Search,2026-08-31,7,73,9.59%,IDR,5752.10,40264.71,35.48%,87.10%,0.00,0,0,0.00%
-Search PULSE-1,Enabled,Search,2026-08-28,5,78,6.41%,IDR,12439.80,62199.00,54.55%,90.91%,2.00,0,31099.50,40.00%
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-28,4,131,3.05%,IDR,2043.55,8174.20,0,0,1.00,0,8174.20,20.00%
-Search PULSE-1,Enabled,Search,2026-08-22,0,1,0.00%,IDR,0,0.00,0,0,0.00,0,0,0
-Search PULSE-1,Enabled,Search,2026-08-24,0,69,0.00%,IDR,0,0.00,18.18%,81.82%,0.00,0,0,0
-Search PULSE-1,Enabled,Search,2026-08-29,0,0,0,IDR,0,0.00,0,0,0.00,0,0,0
-Local store visits and promotions-Performance Max-6,Enabled,Performance Max,2026-08-29,0,1,0.00%,IDR,0,2.00,0,0,0.00,0,0,0
+Search PULSE-1,Enabled,Search,06-08-26,95,258,36.82%,IDR,2017.22,191635.47,50.00%,75.00%,33,0,5807.14,34.74%
+Search PULSE-1,Enabled,Search,09-08-26,79,224,35.27%,IDR,2237.95,2845000.76,11.11%,66.67%,35,0,5051.36,44.30%
+Search PULSE-1,Enabled,Search,02-08-26,77,196,39.29%,IDR,2204.61,169754.86,42.86%,85.71%,23,0,7380.65,29.87%
+Search PULSE-1,Enabled,Search,08-08-26,76,268,28.36%,IDR,5926.78,450435,6.82%,54.55%,25,0,18017.4,32.89%
+Search PULSE-1,Enabled,Search,04-08-26,73,251,29.08%,IDR,2950.48,215385.06,14.29%,54.76%,24,0,8974.38,32.88%
+Search PULSE-1,Enabled,Search,05-08-26,68,215,31.63%,IDR,3025.01,205700.35,13.64%,63.64%,30,0,6856.68,44.12%
+Search PULSE-1,Enabled,Search,01-08-26,66,243,27.16%,IDR,2595.49,171302.13,13.89%,52.78%,26,0,6588.54,39.39%
+Search PULSE-1,Enabled,Search,03-08-26,65,352,18.47%,IDR,2866.85,186345.43,4.88%,48.78%,19,0,9807.65,29.23%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,26-08-26,58,"1,849",3.14%,IDR,2383.69,138253.83,0,0,6,0,23042.3,8.11%
+Search PULSE-1,Enabled,Search,19-08-26,55,639,8.61%,IDR,3809.41,209517.7,16.81%,74.79%,18,0,11639.87,32.73%
+Search PULSE-1,Enabled,Search,20-08-26,48,526,9.13%,IDR,3886.92,186572.25,10.98%,73.78%,7,0,26653.18,14.58%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,25-08-26,40,"1,877",2.13%,IDR,3377.74,135109.44,0,0,9,0,15012.16,17.65%
+Search PULSE-1,Enabled,Search,11-08-26,39,514,7.59%,IDR,4082.33,159210.82,13.82%,64.52%,8,0,19901.35,20.51%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,27-08-26,37,"1,124",3.29%,IDR,2310.55,85490.48,0,0,8,0,10686.31,18.60%
+Search PULSE-1,Enabled,Search,10-08-26,34,335,10.15%,IDR,4689.16,159431.48,12.38%,67.62%,12,0,13285.96,35.29%
+Search PULSE-1,Enabled,Search,18-08-26,32,529,6.05%,IDR,3774.12,120771.76,14.22%,75.36%,6,0,20128.63,18.75%
+Search PULSE-1,Enabled,Search,12-08-26,29,521,5.57%,IDR,5106.79,148096.98,8.50%,59.50%,12,0,12341.41,41.38%
+Search PULSE-1,Enabled,Search,30-08-26,29,344,8.43%,IDR,8270,3559700.33,48.53%,85.29%,1.16,0,206707.15,4.00%
+Search PULSE-1,Enabled,Search,07-08-26,28,87,32.18%,IDR,2591.75,72569,33.33%,66.67%,10,0,7256.9,35.71%
+Search PULSE-1,Enabled,Search,14-08-26,27,340,7.94%,IDR,3646.69,98460.76,15.00%,73.13%,9,0,10940.08,33.33%
+Search PULSE-1,Enabled,Search,17-08-26,25,569,4.39%,IDR,3408.7,85217.42,16.79%,73.28%,4,0,21304.35,16.00%
+Search PULSE-1,Enabled,Search,21-08-26,24,140,17.14%,IDR,4328.21,103877,5.56%,72.22%,11,0,9443.36,45.83%
+Search PULSE-1,Enabled,Search,26-08-26,24,433,5.54%,IDR,9531.7,228760.92,29.59%,81.12%,5.5,0,41592.89,22.92%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,30-08-26,21,"1,377",1.53%,IDR,9523.35,199990.43,0,0,7,0,28570.06,24.14%
+Search PULSE-1,Enabled,Search,15-08-26,19,322,5.90%,IDR,4040.03,76760.56,7.30%,70.80%,5,0,15352.11,26.32%
+Search PULSE-1,Enabled,Search,25-08-26,18,233,7.73%,IDR,6418.56,115534,27.36%,82.08%,3.5,0,33009.71,19.44%
+Search PULSE-1,Enabled,Search,27-08-26,17,459,3.70%,IDR,8318.53,141415,37.90%,82.19%,1,0,141415,5.88%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,24-08-26,17,523,3.25%,IDR,2125.92,36140.61,0,0,2,0,18070.3,7.14%
+Search PULSE-1,Enabled,Search,16-08-26,16,381,4.20%,IDR,3570,57120.05,10.56%,72.22%,2,0,28560.03,12.50%
+Search PULSE-1,Enabled,Search,13-08-26,13,382,3.40%,IDR,3063.59,2890340.22,10.58%,61.90%,2,0,19913.32,15.38%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,31-08-26,12,278,4.32%,IDR,1284.07,15408.86,0,0,1,0,15408.86,4.17%
+Search PULSE-1,Enabled,Search,31-08-26,7,73,9.59%,IDR,5752.1,40264.71,35.48%,87.10%,0,0,0,0.00%
+Search PULSE-1,Enabled,Search,28-08-26,5,78,6.41%,IDR,12439.8,62199,54.55%,90.91%,2,0,31099.5,40.00%
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,28-08-26,4,131,3.05%,IDR,2043.55,8174.2,0,0,1,0,8174.2,20.00%
+Search PULSE-1,Enabled,Search,22-08-26,0,1,0.00%,IDR,0,0,0,0,0,0,0,0
+Search PULSE-1,Enabled,Search,24-08-26,0,69,0.00%,IDR,0,0,18.18%,81.82%,0,0,0,0
+Search PULSE-1,Enabled,Search,29-08-26,0,0,0,IDR,0,0,0,0,0,0,0,0
+Local store visits and promotions-Performance Max-6,Enabled,Performance Max,29-08-26,0,1,0.00%,IDR,0,2,0,0,0,0,0,0
