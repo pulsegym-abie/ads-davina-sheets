@@ -25,8 +25,8 @@ const PLATFORMS = [
 ]
 
 const today = dayjs().format('YYYY-MM-DD')
-const dateFrom = ref(dayjs().startOf('month').format('YYYY-MM-DD'))
-const dateTo = ref(today)
+const dateFrom = ref(null)
+const dateTo = ref(null)
 
 const transactions = ref([])
 const loading = ref(true)
@@ -48,6 +48,7 @@ const platformLabel = (key) => PLATFORMS.find((p) => p.key === key)?.label || ke
 // Show a friendly preset name instead of raw dates when the range matches one
 // of the quick presets — the exact "1 Jul — 17 Aug" span read as confusing.
 const rangeLabel = computed(() => {
+  if (!dateFrom.value && !dateTo.value) return 'Semua'
   const end = dayjs()
   const presets = [
     { from: end.startOf('month').format('YYYY-MM-DD'), label: 'Bulan Ini' },
@@ -70,6 +71,11 @@ async function load() {
 }
 
 function setPreset(preset) {
+  if (preset === 'all') {
+    dateFrom.value = null
+    dateTo.value = null
+    return
+  }
   const end = dayjs()
   if (preset === 'month') dateFrom.value = end.startOf('month').format('YYYY-MM-DD')
   else if (preset === '7d') dateFrom.value = end.subtract(6, 'day').format('YYYY-MM-DD')
@@ -149,7 +155,8 @@ onMounted(load)
         </PopoverTrigger>
         <PopoverContent class="w-auto p-4" align="end">
           <div class="space-y-4">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" @click="setPreset('all')">Semua</Button>
               <Button variant="outline" size="sm" @click="setPreset('7d')">7 hari</Button>
               <Button variant="outline" size="sm" @click="setPreset('30d')">30 hari</Button>
               <Button variant="outline" size="sm" @click="setPreset('month')">Bulan ini</Button>
@@ -157,11 +164,11 @@ onMounted(load)
             <div class="grid grid-cols-2 gap-3">
               <div class="space-y-1.5">
                 <Label class="text-xs">Dari</Label>
-                <Input v-model="dateFrom" type="date" :max="dateTo" class="h-11 text-base sm:h-9 sm:text-sm" />
+                <Input v-model="dateFrom" type="date" :max="dateTo || undefined" class="h-11 text-base sm:h-9 sm:text-sm" />
               </div>
               <div class="space-y-1.5">
                 <Label class="text-xs">Sampai</Label>
-                <Input v-model="dateTo" type="date" :min="dateFrom" class="h-11 text-base sm:h-9 sm:text-sm" />
+                <Input v-model="dateTo" type="date" :min="dateFrom || undefined" class="h-11 text-base sm:h-9 sm:text-sm" />
               </div>
             </div>
           </div>
