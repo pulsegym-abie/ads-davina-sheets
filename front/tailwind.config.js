@@ -8,8 +8,8 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-  			sans: ['"Inter"', 'system-ui', 'sans-serif'],
-  			display: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+  			sans: ['"Google Sans Text"', '"Google Sans"', 'system-ui', 'sans-serif'],
+  			display: ['"Google Sans"', '"Google Sans Text"', 'system-ui', 'sans-serif'],
   		},
   		colors: {
   			background: 'hsl(var(--background))',
